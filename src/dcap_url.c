@@ -152,6 +152,10 @@ dcap_url* dc_getURL( const char *path )
 		}
 
 		domain = strchr(w + 1, '/');
+		if( domain == NULL ) {
+			free(url);
+			return NULL;
+		}
 		domain++;
 		w = strchr(domain , '/');
 		if( w == NULL ) {
