@@ -25,6 +25,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/uio.h> /* needed for readv/writev */
+#include <limits.h>
+#ifndef IOV_MAX
+#    define IOV_MAX 1024
+#endif
 
 #include <fcntl.h>
 #ifndef WIN32
