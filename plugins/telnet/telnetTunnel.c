@@ -35,7 +35,7 @@ int eInit(int fd)
 
 	  if (pf != NULL) {
 
-	    while (fgets (bf, 200, pf) > 0) {
+	    while (fgets (bf, 200, pf) != NULL) {
 	      if (strstr (bf, "dCap_Username = ")) {
 		bf[strlen(bf)-1] = 0;
 		user = strdup (bf + strlen ("dCap_Username = "));
