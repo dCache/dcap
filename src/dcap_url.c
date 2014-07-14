@@ -28,6 +28,7 @@
 #include "debug_level.h"
 #include "xutil.h"
 #include "dcap_str_util.h"
+#include "tunnelManager.h"
 
 #define DCAP_PREFIX "dcap://"
 #define PNFS_PREFIX "pnfs://"
@@ -48,13 +49,13 @@ dcap_url* dc_getURL( const char *path )
 	dcap_url *url;
 	char *s;
 	char *w;
-	char *host;
+	char *port_str;
 	int host_len;
 	int type = URL_NONE;
 	int def_door_len;
 	char *domain;
 	struct servent *se;
-	short port;
+        char *t;
 
 
 	if(path == NULL) {
@@ -92,6 +93,8 @@ dcap_url* dc_getURL( const char *path )
 	url->file = NULL;
 	url->prefix = NULL;
 	url->type= type;
+        url->need_brackets = 0;
+        url->port = -1;
 
 
 	if( s != path ) {
@@ -118,29 +121,44 @@ dcap_url* dc_getURL( const char *path )
 
     if( host_len != 0 ) {
 
-		host = xstrndup(s, host_len );
+                if (s[0] == '[') {
+                    /* ipv6 address */
+                    s++;
+                    t = strchr(s, ']');
+                    if (t == NULL || t > w) {
+                        /* bad formated url */
+                        dc_errno = DEURL;
+                        dc_debug(DC_ERROR, "badly formed url for %s", path);
+                        free(url);
+                        return NULL;
+                    }
+                    url->need_brackets = 1;
+                    url->host = xstrndup(s, t - s);
+                    s = t+1;
+                } else {
+                    t = strchr(s, ':');
+                    if (t == NULL || t > w) {
+                        url->host = xstrndup(s, w - s);
+                        s = w;
+                    } else {
+                        url->host = xstrndup(s, t - s);
+                        s = t;
+                    }
+                }
 
-		if(host == NULL) {
-			dc_debug(DC_ERROR, "Failed to duplicate host in url %s", path);
-			free(url);
-			return NULL;
-		}
+                /* s points to ':' or '/' */
 
-
-		/* if port not specified, take it from /etc/services or fall back to default */
-		w = strchr(host, ':');
-		if( w == NULL ) {
+		if( s[0] == '/' ) {
 			w = strchr(path, ':');
 			w = xstrndup(path, w - path);
 			se = getservbyname(w, "tcp");
 			free(w);
-			port = se ? ntohs(se->s_port) : DEFAULT_DOOR_PORT;
-			url->host = malloc(host_len + 1 + 8);
-			url->host[0] = '\0';
-			sprintf(url->host, "%s:%d", host, port );
-			free(host);
+			url->port = se ? ntohs(se->s_port) : DEFAULT_DOOR_PORT;
 		}else{
-			url->host = host;
+                        s++;
+                        port_str = xstrndup(s, w-s);
+                        url->port = atoi(port_str);
+                        free(port_str);
 		}
 
 
@@ -184,17 +202,3 @@ dcap_url* dc_getURL( const char *path )
 
 	return url;
 }
-
-char * url2config(char *configLine, size_t configLineSize, dcap_url *url)
-{
-
-	snprintf(configLine, configLineSize, "%s", url->host);
-	configLine[configLineSize-1] = '\0';
-
-	if ( url->prefix != NULL ) {
-		dc_snaprintf(configLine, configLineSize, ":lib%sTunnel.so", url->prefix );
-	}
-
-	return configLine;
-}
-

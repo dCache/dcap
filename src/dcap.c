@@ -122,6 +122,7 @@ static void getPortRange();
 static int isActive();
 static ConfirmationBlock get_reply(int);
 static int name_invalid(char *);
+static server * url2srv(dcap_url *);
 
 #ifndef HAVE_HTONLL
     uint64_t  htonll(uint64_t);
@@ -542,7 +543,7 @@ serverConnect(struct vsp_node * node)
 		lockMember();
 		if ((node->fd = getMember(dcache_host)) != -1) {
 
-			srv = parseConfig(node->url == NULL ? dcache_host : url2config(buffer, sizeof(buffer), node->url) );
+			srv = node->url == NULL ? parseConfig(dcache_host) : url2srv(node->url);
 			if (srv == NULL) {
 				unlockMember();
 				return -1;
@@ -560,7 +561,7 @@ serverConnect(struct vsp_node * node)
 
 		newQueue(0);
 		dc_debug(DC_INFO, "Creating a new control connection to %s.",dcache_host );
-		srv = parseConfig(node->url == NULL ? dcache_host : url2config(buffer, sizeof(buffer), node->url) );
+		srv = node->url == NULL ? parseConfig(dcache_host) : url2srv(node->url);
 
 		if (srv == NULL) {
 			unlockMember();
@@ -1993,4 +1994,31 @@ static int isActive()
 void dc_setClientActive()
 {
 	activeClient=1;
+}
+
+server * url2srv(dcap_url *url)
+{
+
+    server *srv;
+    char *tunnel;
+
+    srv = (server *) malloc(sizeof (server));
+    if (srv == NULL) {
+        dc_errno = DESYS;
+        return NULL;
+    }
+
+    srv->hostname = strdup(url->host);
+    srv->port = url->port;
+
+    if (url->prefix != NULL) {
+        tunnel = malloc(64);
+        tunnel[0] = '\0';
+        sprintf(tunnel, "lib%sTunnel.so", url->prefix);
+        srv->tunnel = addIoPlugin(tunnel);
+        free(tunnel);
+    } else {
+        srv->tunnel = NULL;
+    }
+    return srv;
 }
