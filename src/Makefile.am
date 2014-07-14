@@ -135,7 +135,7 @@ libpdcap_la_LDFLAGS = -no-undefined -version-info $(LIBRARY_VERSION)
 
 bin_PROGRAMS = dccp
 
-noinst_PROGRAMS = dcap_test dcsuck readv_test wdccp dcap_url_test
+noinst_PROGRAMS = dcap_test dcsuck readv_test wdccp
 
 dccp_SOURCES = dccp.c $(h_internal) print_size.c sigfig.c
 dccp_LDFLAGS = -lm
@@ -161,11 +161,6 @@ wdccp_SOURCES = wdccp.c
 wdccp_LDFLAGS =
 wdccp_LDADD = $(LDADDS) libdcap.la
 wdccp_CFLAGS = $(AM_CFLAGS)
-
-dcap_url_test_SOURCES = dcap_url-test.c
-dcap_url_test_LDFLAGS =
-dcap_url_test_LDADD = $(LDADDS) libdcap.la
-dcap_url_test_CFLAGS = $(AM_CFLAGS)
 
 .PHONY: tags
 tags:
