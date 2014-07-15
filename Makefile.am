@@ -46,7 +46,7 @@ dist-hook:
 
 
 
-SUBDIRS = src plugins
+SUBDIRS = src plugins tests
 
 rpm: dist @PACKAGE@.spec
 	mkdir -p $(topdir)/SOURCES \

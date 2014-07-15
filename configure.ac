@@ -359,7 +359,14 @@ nokrb=1
 fi
 AC_SUBST(KRB_LIBS)
 
-
+nocunit=0
+AC_CHECK_HEADERS([CUnit/Basic.h],[],[nocunit=1])
+AC_CHECK_LIB(cunit,CU_initialize_registry, [
+CUNIT_LIBS="-lcunit"
+],[
+nocunit=1
+])
+AC_SUBST(CUNIT_LIBS)
 
 CPPFLAGS=${_cppflags}
 LDFLAGS=${_ldflags}
@@ -574,4 +581,5 @@ AC_OUTPUT(Makefile \
   plugins/gssapi/Makefile \
   plugins/ssl/Makefile \
   plugins/telnet/Makefile \
+  tests/Makefile \
   dcap.spec )
