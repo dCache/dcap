@@ -72,6 +72,7 @@
 
 static char    *hostName;
 static int      callBackSocket = -1;
+static pid_t    callBackPid = -1;
 static unsigned short    callBackPort = 0;
 static unsigned short    callBackPortRange = 1;
 
@@ -114,6 +115,7 @@ static server *parseConfig(const char *);
 static int cache_connect(server *);
 static int sayHello(int, ioTunnel *);
 static int create_data_socket(int *, unsigned short *);
+static int get_data_socket();
 static int ascii_open_conversation(struct vsp_node *);
 static int getDataMessage(struct vsp_node *);
 static void getRevision( revision * );
@@ -276,15 +278,9 @@ cache_open(vsp_Node * node )
 		(node->asciiCommand == DCAP_CMD_OPENDIR ) ||
 		(node->asciiCommand == DCAP_CMD_TRUNC) ) {
 
-		m_lock(&bindLock);
-		if( callBackSocket == -1 ) {
-			if ( create_data_socket(&callBackSocket, &callBackPort) < 0) {
-				dc_debug(DC_ERROR, "Callback socket not created.");
-				m_unlock(&bindLock);
-				return -1;
-			}
+		if (get_data_socket()) {
+			return -1;
 		}
-		m_unlock(&bindLock);
 
 		node->data_port = callBackPort;
 	}
@@ -785,6 +781,26 @@ sayHello(int fd, ioTunnel *en)
 	free(aM);
 
 	return 0;
+}
+
+int
+get_data_socket()
+{
+       /* Initialize the callback socket */
+       /* Only performed once per PID (but must be done for every PID due to forks). */
+       m_lock(&bindLock);
+        pid_t curPid = getpid();
+       if( (curPid != callBackPid) || (callBackSocket == -1) ) {
+                callBackPort = 0;
+               if ( create_data_socket(&callBackSocket, &callBackPort) < 0) {
+                       dc_debug(DC_ERROR, "Callback socket not created.");
+                       m_unlock(&bindLock);
+                       return -1;
+               }
+               callBackPid = curPid;
+       }
+       m_unlock(&bindLock);
+       return 0;
 }
 
 int

@@ -28,6 +28,12 @@
 
 #include <stdio.h>
 
+#ifdef __APPLE__
+/* MACOSX API is 64 bit clean. No need for "64" suffix. */
+typedef off_t off64_t;
+#define stat64 stat
+#endif
+
 extern int system_open(const char *, int, mode_t);
 extern int system_read(int, void *, size_t);
 extern int system_readv(int, const struct iovec *vector, int count);

@@ -14,6 +14,9 @@
  * $Id: print_size.h.in,v 1.57 2007-07-09 19:35:09 tigran Exp $
  */
 
+#ifdef __APPLE__
+#define off64_t off_t
+#endif
 void dc_bytes_as_size( char *buffer, off64_t size);
 void dc_bytes_as_size_with_max_fraction( char *buffer, off64_t size,
 					 double max_fraction);

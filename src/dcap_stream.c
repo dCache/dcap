@@ -83,7 +83,7 @@ int dc_feof(FILE *fp)
 		return system_feof(fp);
 	}
 
-#if defined(__linux__) || defined(__GNU__) || defined(__FreeBSD_kernel__) || defined(__CYGWIN__)
+#if defined(__linux__) || defined(__GNU__) || defined(__FreeBSD_kernel__) || defined(__CYGWIN__) || defined(__APPLE__)
 	if ( ((FILE *)fp)->_flags & _IO_EOF_SEEN ) {
 #else
 	if ( ((FILE *)fp)->_flag & _IOEOF ) {
@@ -140,6 +140,8 @@ FILE   *dc_fopen64(const char *file, const char *mode)
 		fp->_IO_write_base = NULL;
 		fp->_lock = NULL;
 		fp->_flags = 0;
+        #elif defined(__APPLE__)
+                fp->_flags = 0;
 	#else
 		fp->_flag = 0;
 	#endif
@@ -182,6 +184,8 @@ FILE   *dc_fdopen(int fd, const char *mode)
 	fp->_IO_write_ptr = NULL;
 	fp->_IO_write_base = NULL;
 	fp->_flags = 0;
+#elif defined(__APPLE__)
+	fp->_flags = 0;
 #else
 	fp->_flag = 0;
 #endif
@@ -207,7 +211,7 @@ size_t dc_fread(void *ptr, size_t size, size_t items, FILE *fp)
 	switch(rc) {
 		case -1:
 		case 0:
-#if defined(__linux__) || defined(__GNU__) || defined(__FreeBSD_kernel__) || defined(__CYGWIN__)
+#if defined(__linux__) || defined(__GNU__) || defined(__FreeBSD_kernel__) || defined(__CYGWIN__) || defined(__APPLE__)
 			((FILE *)fp)->_flags |= _IO_EOF_SEEN;
 #else
 			((FILE *)fp)->_flag |= _IOEOF;
@@ -308,7 +312,7 @@ size_t dc_fwrite(const void *ptr, size_t size, size_t items, FILE *fp)
 
 	switch(rc) {
 		case -1:
-#if defined(__linux__) || defined(__GNU__) || defined(__FreeBSD_kernel__) || defined(__CYGWIN__)
+#if defined(__linux__) || defined(__GNU__) || defined(__FreeBSD_kernel__) || defined(__CYGWIN__) || defined(__APPLE__)
 			((FILE *)fp)->_flags |= _IO_ERR_SEEN ;
 #else
 			((FILE *)fp)->_flag |= _IOERR ;
@@ -316,7 +320,7 @@ size_t dc_fwrite(const void *ptr, size_t size, size_t items, FILE *fp)
 			rc= 0 ;
 			break ;
 		case 0:
-#if defined(__linux__) || defined(__GNU__) || defined(__FreeBSD_kernel__) || defined(__CYGWIN__)
+#if defined(__linux__) || defined(__GNU__) || defined(__FreeBSD_kernel__) || defined(__CYGWIN__) || defined(__APPLE__)
 			((FILE *)fp)->_flags |= _IO_EOF_SEEN ;
 #else
 			((FILE *)fp)->_flag |= _IOEOF ;

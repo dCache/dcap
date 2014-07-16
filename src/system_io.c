@@ -34,6 +34,10 @@
 static MUTEX(gLock);
 static void *handle;
 
+#ifdef __APPLE__
+#define off64_t off_t
+#endif
+
 /*
  *  Convert from (void *) to different function pointer
  *  types.  For details why this is necessary, please

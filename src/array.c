@@ -16,6 +16,9 @@
  */
 
 
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include "sysdep.h"
 #include "char2crc.h"
@@ -31,6 +34,22 @@ typedef struct {
 static arrayElement *array;
 static int      len;
 
+unsigned long
+array_char2crc(const unsigned char * key)
+{
+   unsigned long kh;
+   size_t keysize = strlen((const char *)key);
+   char * new_key = (char *)malloc(sizeof(char)*(keysize+10));
+   if (new_key == NULL) {
+     /* Malloc failed; return original function */
+     return char2crc(key);
+   }
+   snprintf(new_key, keysize, "%i %s", getpid(), key);
+   kh = char2crc((const unsigned char *)new_key);
+   free(new_key);
+   return kh;
+}
+
 unsigned short
 isMember(char *key)
 {
@@ -38,7 +57,7 @@ isMember(char *key)
 	unsigned long   kh;
 	int             i;
 
-	kh = char2crc((const unsigned char *)key);
+	kh = array_char2crc((const unsigned char *)key);
 	for (i = 0; i < len; i++) {
 		if (array[i].key == kh) {
 			m_unlock(&gLock);
@@ -62,7 +81,7 @@ addMember(char *key, int value)
 
 	array = tmpArray;
 	array[len].value = value;
-	array[len].key = char2crc((const unsigned char *)key);
+	array[len].key = array_char2crc((const unsigned char *)key);
 
 	len++;
 	return;
@@ -77,7 +96,7 @@ getMember(char *key)
 	int             i;
 	int             value;
 
-	kh = char2crc((const unsigned char *)key);
+	kh = array_char2crc((const unsigned char *)key);
 
 	for (i = 0; i < len; i++) {
 		if (array[i].key == kh) {
@@ -104,7 +123,7 @@ deleteMember(char *key)
 	if (tmpArray == NULL) {
 		return;
 	}
-	kh = char2crc((const unsigned char *)key);
+	kh = array_char2crc((const unsigned char *)key);
 	for (i = 0, j = 0; i < len; i++) {
 
 		if (array[i].key == kh) {
