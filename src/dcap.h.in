@@ -37,6 +37,11 @@
 #endif /* WIN32 */
 #include <dcap_errno.h>
 
+#ifdef __APPLE__
+#define stat64 stat
+#define off64_t off_t
+#define dirent64 dirent
+#endif
 
 #ifdef  __cplusplus
 extern "C" {

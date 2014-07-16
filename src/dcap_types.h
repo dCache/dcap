@@ -36,6 +36,10 @@ typedef int int32_t;
 typedef long int64_t;
 #endif /* alpha */
 
+#ifdef __APPLE__
+#define off64_t off_t
+#endif
+
 typedef struct {
 
 	int32_t         code;

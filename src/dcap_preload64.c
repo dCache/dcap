@@ -30,8 +30,10 @@
 #include "dcap.h"
 #include "debug_level.h"
 
-/* Replacing system calls with our if we are PRELOAD library */
+// MacosX does not have a special API for 64bit.
+#ifndef __APPLE__
 
+/* Replacing system calls with our if we are PRELOAD library */
 
 /*
  *  work around linux glibc header files mess:
@@ -41,12 +43,12 @@
 
 int open64(const char *path, int flags,...)
 {
-	mode_t mode = 0;
+	int mode = 0;
 	va_list    args;
 
 	if (flags & O_CREAT) {
 		va_start(args, flags);
-		mode = va_arg(args, mode_t);
+		mode = va_arg(args, int);
 		va_end(args);
 	}
 
@@ -147,3 +149,4 @@ off64_t ftello64 (FILE *stream )
 	dc_debug(DC_TRACE, "Running preloaded ftello64");
 	return dc_ftello64( stream );
 }
+#endif

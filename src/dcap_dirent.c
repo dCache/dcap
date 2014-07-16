@@ -58,13 +58,17 @@ struct __dirstream   {
 
 #endif
 
-#ifdef sun
+#if defined(sun)
 
 #define DIRENT_FD(x) x->dd_fd
 #define DIRENT_DATA(x) x->dd_buf
 
 #endif
 
+#if defined(__APPLE__)
+#define DIRENT_FD(x) x->__dd_fd
+#define DIRENT_DATA(x) x->__dd_buf
+#endif
 
 DIR * dc_opendir(const char *path)
 {
@@ -156,11 +160,11 @@ struct dirent *dc_readdir( DIR *dir)
 	}
 
 	memcpy(ent.d_name, ep->d_name, 256);
-#if defined(__linux__) || defined(__GNU__) || defined(__FreeBSD_kernel__)
+#if defined(__linux__) || defined(__GNU__) || defined(__FreeBSD_kernel__) || defined(__APPLE__)
 	ent.d_type = ep->d_type;
 #endif
 	ent.d_reclen = ep->d_reclen;
-#if !defined(__GNU__) && !defined(__FreeBSD_kernel__)
+#if !defined(__GNU__) && !defined(__FreeBSD_kernel__) && !defined(__APPLE__)
 	ent.d_off = (off_t)ep->d_off;
 #endif
 	ent.d_ino = (ino_t)ep->d_ino;
