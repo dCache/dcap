@@ -196,6 +196,7 @@ extern void dc_setClientActive();
 
 /* extra options */
 extern void dc_setExtraOption(char *);
+extern void dc_resetExtraOption();
 
 /* thread-safe errno hack */
 #ifdef _REENTRANT

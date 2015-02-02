@@ -1842,6 +1842,13 @@ dc_setExtraOption( char *s)
 
 }
 
+void dc_resetExtraOption()
+{
+	dc_debug(DC_INFO, "resetting extra option");
+	free(extraOption);
+	extraOption = NULL;
+}
+
 void dc_setOpenTimeout(time_t t)
 {
 	openTimeOut = t;
