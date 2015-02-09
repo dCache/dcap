@@ -575,7 +575,6 @@ AC_SUBST(GLOBUS_LIB_DIR)
 
 AC_OUTPUT(Makefile \
   src/Makefile \
-  src/dcap.h \
   src/dcap_version.c \
   plugins/Makefile \
   plugins/gssapi/Makefile \
