@@ -87,6 +87,7 @@ ioTunnel *addIoPlugin(const char *libname)
 {
 	void *handle;
 	ioTunnel *tunnel;
+	char *fullpath;
 
 	if(libname == NULL) {
 		dc_debug(DC_ERROR, "Bad tunnel name");
@@ -100,6 +101,15 @@ ioTunnel *addIoPlugin(const char *libname)
 
 	handle = dlopen( libname, RTLD_NOW);
 		
+	if(handle == NULL) {
+		fullpath = malloc(strlen(TUNNELLIBDIR) + strlen(libname) + 2);
+		strcpy(fullpath, TUNNELLIBDIR);
+		strcat(fullpath, "/");
+		strcat(fullpath, libname);
+		handle = dlopen(fullpath, RTLD_NOW);
+		free(fullpath);
+	}
+
 	if(handle == NULL) {		
 		goto fail;
 	}

@@ -572,6 +572,29 @@ dnl Passing configure variables to spec file for rpm to build.
 AC_SUBST(GLOBUS_INCLUDE_DIR)
 AC_SUBST(GLOBUS_LIB_DIR)
 
+TUNNELLIBDIR="$libdir"
+AC_ARG_WITH(tunneldir,
+[ --with-tunneldir[[=DIR]] where to install dcap plugins],[
+if test "X${withval}" != "X" ; then
+TUNNELLIBDIR="$withval"
+fi
+])
+
+save_prefix="$prefix"
+save_exec_prefix="$exec_prefix"
+if test "X$prefix" = "XNONE" ; then
+   prefix="$ac_default_prefix"
+fi
+if test "X$exec_prefix" = "XNONE" ; then
+   exec_prefix="$prefix"
+fi
+eval tunnellibdir="$TUNNELLIBDIR"
+eval tunnellibdir="$tunnellibdir"
+prefix="$save_prefix"
+exec_prefix="$save_exec_prefix"
+
+AC_DEFINE_UNQUOTED(TUNNELLIBDIR, "$tunnellibdir", [where to install dcap plugins])
+AC_SUBST(TUNNELLIBDIR)
 
 AC_OUTPUT(Makefile \
   src/Makefile \

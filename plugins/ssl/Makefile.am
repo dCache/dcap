@@ -4,7 +4,8 @@ c_sources = sslTunnel.c user.c
 AM_CFLAGS=$(CWFLAG) \
 	-D_REENTRANT -DLIBC_SYSCALLS -D_GNU_SOURCE
 
-lib_LTLIBRARIES = libsslTunnel.la
+tunnellibdir = $(TUNNELLIBDIR)
+tunnellib_LTLIBRARIES = libsslTunnel.la
 
 libsslTunnel_la_SOURCES = $(c_sources)  $(h_sources)
 libsslTunnel_la_LIBADD = $(SSL_LIBS)
