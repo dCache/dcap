@@ -5,12 +5,13 @@ c_sources = base64.c  client.c  gssIoTunnel.c  tunnelQueue.c  util.c
 AM_CFLAGS=$(CWFLAG) \
 	-D_REENTRANT -DLIBC_SYSCALLS -D_GNU_SOURCE
 
-lib_LTLIBRARIES =
+tunnellibdir = $(TUNNELLIBDIR)
+tunnellib_LTLIBRARIES =
 if WANT_LIBGSITUNNEL
-lib_LTLIBRARIES += libgsiTunnel.la
+tunnellib_LTLIBRARIES += libgsiTunnel.la
 endif
 if WANT_LIBGSSTUNNEL
-lib_LTLIBRARIES += libgssTunnel.la
+tunnellib_LTLIBRARIES += libgssTunnel.la
 endif
 
 libgsiTunnel_la_SOURCES = $(c_sources)  $(h_sources)

@@ -7,7 +7,8 @@ c_sources = dcapPasswd.c  telnetTunnel.c  user.c
 AM_CFLAGS= $(CWFLAG) \
 	-D_REENTRANT -DLIBC_SYSCALLS -D_GNU_SOURCE
 
-lib_LTLIBRARIES = libtelnetTunnel.la
+tunnellibdir = $(TUNNELLIBDIR)
+tunnellib_LTLIBRARIES = libtelnetTunnel.la
 
 libtelnetTunnel_la_SOURCES = $(c_sources)  $(h_sources)
 libtelnetTunnel_la_LIBADD = -lcrypt
