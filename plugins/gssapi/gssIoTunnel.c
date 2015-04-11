@@ -43,12 +43,10 @@ static ssize_t writen(int fd, const void *buf, size_t nbyte);
 int
 eInit(int fd)
 {
-
 	int             ret;
-	struct sockaddr_in remote;
-	socklen_t       addrlen;
-	struct in_addr *addr;
-	struct hostent *hostEnt;
+	struct sockaddr_in6 remote;
+	socklen_t addrlen;
+	char host[NI_MAXHOST];
 
 #if defined(GSIGSS) &&  defined(GLOBUS_BUG)
 	/* work arount globus bug */
@@ -59,19 +57,16 @@ eInit(int fd)
 
 	addrlen = sizeof(remote);
 	if (getpeername(fd, (struct sockaddr *) & remote, &addrlen) < 0
-	    || addrlen != sizeof(remote)) {
+	    || addrlen > sizeof(remote)) {
 #ifdef SHOW_ERROR
 		perror("getpeername");
 #endif
 		return -1;
 	}
-	addr = (struct in_addr *) & (remote.sin_addr);
-	hostEnt = (struct hostent *) gethostbyaddr((const char *) addr, sizeof(struct in_addr), AF_INET);
 
-	if (hostEnt == NULL) {
-		/* Can't resolve address. */
+	if (getnameinfo((const struct sockaddr *) &remote, addrlen, host, sizeof(host), NULL, 0, 0) != 0 ) {
 #ifdef SHOW_ERROR
-		perror("can't resolv address\n");
+		perror("can't resolve address\n");
 #endif
 		return -1;
 	}
@@ -81,8 +76,7 @@ eInit(int fd)
 		return -1;
 	}
 
-	ret =  gssAuth(fd, tunnel_ctx, (const char *)hostEnt->h_name, "host");
-
+	ret =  gssAuth(fd, tunnel_ctx, (const char *)host, "host");
 	if( ret == 1) {
 		tunnel_ctx->isAuthentificated = 1;
 	} /* else -> talking plain...(base64) */
@@ -305,7 +299,7 @@ import_name(const char *kname, const char *host, gss_name_t * target_name)
 int
 gssAuth(int sock, tunnel_ctx_t* tunnel_ctx, const char *hostname, const char *service)
 {
-	struct sockaddr_in remote, local;
+	struct sockaddr_in6 remote, local;
 	socklen_t       addrlen;
 
 	gss_buffer_desc real_input_token, real_output_token;
@@ -321,7 +315,7 @@ gssAuth(int sock, tunnel_ctx_t* tunnel_ctx, const char *hostname, const char *se
 	}
 	addrlen = sizeof(local);
 	if (getsockname(sock, (struct sockaddr *) & local, &addrlen) < 0
-	    || addrlen != sizeof(local)) {
+	    || addrlen > sizeof(local)) {
 #ifdef SHOW_ERROR
 		perror("sockname");
 #endif
@@ -329,7 +323,7 @@ gssAuth(int sock, tunnel_ctx_t* tunnel_ctx, const char *hostname, const char *se
 	}
 	addrlen = sizeof(remote);
 	if (getpeername(sock, (struct sockaddr *) & remote, &addrlen) < 0
-	    || addrlen != sizeof(remote)) {
+	    || addrlen > sizeof(remote)) {
 #ifdef SHOW_ERROR
 		perror("getpeer");
 #endif

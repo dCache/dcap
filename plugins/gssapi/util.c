@@ -25,6 +25,11 @@
 #include <gssapi_generic.h>
 #endif /* MIT_KRB5 */
 
+/* workaround for MIT kerberos implementation */
+#ifndef GSS_C_AF_INET6
+#  define GSS_C_AF_INET6 24
+#endif
+
 void gss_print_errors (int min_stat);
 void gss_err(int exitval, int status, const char *fmt, ...);
 
@@ -547,16 +552,21 @@ sockaddr_to_gss_address (const struct sockaddr *sa,
 			 OM_uint32 *addr_type,
 			 gss_buffer_desc *gss_addr)
 {
-	struct sockaddr_in *sin;
-
     switch (sa->sa_family) {
-    case AF_INET :
-		sin = (struct sockaddr_in *)sa;
-
-		gss_addr->length = 4;
+    case AF_INET : {
+		struct sockaddr_in *sin = (struct sockaddr_in *)sa;
+		gss_addr->length = sizeof(struct in_addr);;
 		gss_addr->value  = &sin->sin_addr;
 		*addr_type       = GSS_C_AF_INET;
 		break;
+	}
+    case AF_INET6: {
+		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sa;
+		gss_addr->length = sizeof(struct in6_addr);
+		gss_addr->value  = &sin6->sin6_addr;
+		*addr_type       = GSS_C_AF_INET6;
+		break;
+	}
     default :
 		fprintf(stderr, "unknown address family %d", sa->sa_family);
 		break;
