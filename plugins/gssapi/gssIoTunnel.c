@@ -249,6 +249,9 @@ eDestroy(int fd)
 
 	OM_uint32       maj_stat, min_stat;
 	tunnel_ctx_t* tunnel_ctx = getGssContext(fd);
+	if( tunnel_ctx == NULL ) {
+		return -1;
+	}
 
 	maj_stat = gss_delete_sec_context(&min_stat,  &tunnel_ctx->context_hdl, GSS_C_NO_BUFFER);
 	destroyGssContext(fd);
