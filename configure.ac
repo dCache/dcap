@@ -11,11 +11,11 @@ AM_CONFIG_HEADER(src/debug_level.h)
 
 
 dnl uncomment when tagging
-#RELEASE=TRUE
+RELEASE=TRUE
 
 VER_ARCHITECTURE=2
 VER_MAJOR=47
-VER_MINOR=9
+VER_MINOR=10
 VER_PATCH=1
 if test "A" = A$RELEASE; then
     VER_PATCH=${VER_PATCH}_`date '+20%y%m%d%H'`
