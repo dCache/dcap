@@ -124,9 +124,45 @@ rm -rf %{buildroot}
 make %{?_smp_mflags} check
 %endif
 
-%post libs -p /sbin/ldconfig
+%post tunnel-telnet
+cat >/etc/ld.so.conf.d/dcap-tunnel-telnet.conf <<EOF
+%{_libdir}/%{name}
+EOF
+/sbin/ldconfig
 
-%postun libs -p /sbin/ldconfig
+%post tunnel-ssl
+cat >/etc/ld.so.conf.d/dcap-tunnel-ssl.conf <<EOF
+%{_libdir}/%{name}
+EOF
+/sbin/ldconfig
+
+%post tunnel-krb
+cat >/etc/ld.so.conf.d/dcap-tunnel-krb.conf <<EOF
+%{_libdir}/%{name}
+EOF
+/sbin/ldconfig
+
+%post tunnel-gsi
+cat >/etc/ld.so.conf.d/dcap-tunnel-gsi.conf <<EOF
+%{_libdir}/%{name}
+EOF
+/sbin/ldconfig
+
+%postun tunnel-telnet
+rm /etc/ld.so.conf.d/dcap-tunnel-telnet.conf
+/sbin/ldconfig
+
+%postun tunnel-ssl
+rm /etc/ld.so.conf.d/dcap-tunnel-ssl.conf
+/sbin/ldconfig
+
+%postun tunnel-krb
+rm /etc/ld.so.conf.d/dcap-tunnel-krb.conf
+/sbin/ldconfig
+
+%postun tunnel-gsi
+rm /etc/ld.so.conf.d/dcap-tunnel-gsi.conf
+/sbin/ldconfig
 
 # Redefine license as doc for old rpm versions (EPEL 5 and 6)
 %{!?_licensedir: %global license %%doc}
