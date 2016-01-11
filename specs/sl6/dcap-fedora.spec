@@ -89,14 +89,13 @@ This library is dynamically loaded at runtime.
 %prep
 %setup -q
 
-sed 's!@@LIBDIR@@!%{_libdir}!' -i src/tunnelManager.c
-
 %build
 chmod +x bootstrap.sh
 ./bootstrap.sh
 
 %configure \
     --disable-static \
+    --with-tunneldir=%{_libdir}/%{name} \
     --with-globus-include=%{_includedir}/globus \
     --with-globus-lib=/dummy
 make %{?_smp_mflags}
@@ -108,10 +107,7 @@ make install DESTDIR=%{buildroot}
 
 # Remove libtool archive files
 rm -rf %{buildroot}/%{_libdir}/*.la
-
-# Move plugins out of the default library path
-mkdir %{buildroot}/%{_libdir}/%{name}
-mv %{buildroot}/%{_libdir}/lib*Tunnel* %{buildroot}/%{_libdir}/%{name}
+rm -rf %{buildroot}/%{_libdir}/%{name}/*.la
 
 # We are installing the docs in the files sections
 rm -rf %{buildroot}/%{_docdir}
@@ -124,45 +120,9 @@ rm -rf %{buildroot}
 make %{?_smp_mflags} check
 %endif
 
-%post tunnel-telnet
-cat >/etc/ld.so.conf.d/dcap-tunnel-telnet.conf <<EOF
-%{_libdir}/%{name}
-EOF
-/sbin/ldconfig
+%post libs -p /sbin/ldconfig
 
-%post tunnel-ssl
-cat >/etc/ld.so.conf.d/dcap-tunnel-ssl.conf <<EOF
-%{_libdir}/%{name}
-EOF
-/sbin/ldconfig
-
-%post tunnel-krb
-cat >/etc/ld.so.conf.d/dcap-tunnel-krb.conf <<EOF
-%{_libdir}/%{name}
-EOF
-/sbin/ldconfig
-
-%post tunnel-gsi
-cat >/etc/ld.so.conf.d/dcap-tunnel-gsi.conf <<EOF
-%{_libdir}/%{name}
-EOF
-/sbin/ldconfig
-
-%postun tunnel-telnet
-rm /etc/ld.so.conf.d/dcap-tunnel-telnet.conf
-/sbin/ldconfig
-
-%postun tunnel-ssl
-rm /etc/ld.so.conf.d/dcap-tunnel-ssl.conf
-/sbin/ldconfig
-
-%postun tunnel-krb
-rm /etc/ld.so.conf.d/dcap-tunnel-krb.conf
-/sbin/ldconfig
-
-%postun tunnel-gsi
-rm /etc/ld.so.conf.d/dcap-tunnel-gsi.conf
-/sbin/ldconfig
+%postun libs -p /sbin/ldconfig
 
 # Redefine license as doc for old rpm versions (EPEL 5 and 6)
 %{!?_licensedir: %global license %%doc}
@@ -199,9 +159,9 @@ rm /etc/ld.so.conf.d/dcap-tunnel-gsi.conf
 %{_libdir}/%{name}/libtelnetTunnel.so
 
 %changelog
-* Fri Dec 18 2015 Christian Bernardt <christian.bernardt@desy.de> - 2.47.10-1
-- New release with some IPv6 patches
-- Took Fedora dcap spec and slightly modiefied it
+* Mon Jan 11 2016 Mattias Ellert <mattias.ellert@fysast.uu.se> - 2.47.10-1
+- New upstream release
+- Drop patch dcap-dlopen.patch - merged upstream
 
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.47.9-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
