@@ -1,6 +1,6 @@
 Name:		dcap
 Version:	2.47.10
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Client Tools for dCache
 
 Group:		Applications/Internet
