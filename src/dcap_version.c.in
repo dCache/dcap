@@ -26,5 +26,5 @@ const char *dc_getPatch()
 /*depricated method please use above methods*/
 const char *getDcapVersion()
 {
-	return VER( version-1-@VER_ARCHITECTURE@-@VER_MAJOR@ );
+	return VER( version-@VER_ARCHITECTURE@-@VER_MAJOR@-@VER_MINOR@ );
 }
