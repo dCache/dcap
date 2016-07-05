@@ -170,8 +170,10 @@ typedef struct {
 } acceptSocket;
 
 typedef struct {
-	int Min;
-	int Maj;
+	int Maj; /* First digit in version: x in x.y.z-p */
+	int Min; /* Second digit in version: y in x.y.z-p */
+	int Bug; /* Third digit in version: z in x.y.z-p */
+	char *Patch; /* Patch level : p in x.y.z-p */
 } revision;
 
 

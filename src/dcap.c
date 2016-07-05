@@ -743,6 +743,8 @@ sayHello(int fd, ioTunnel *en)
 {
 
 	char            helloStr[64];
+	char            *patch;
+	char            *i;
 	revision        rev;
 	int             pid;
 	int             uid;
@@ -759,9 +761,15 @@ sayHello(int fd, ioTunnel *en)
 	gid = (int)getgid();
 #endif
 
-    getRevision(&rev);
+	getRevision(&rev);
+	patch = strdup(rev.Patch);
+	while (i = strchr(patch, '\"')) {
+	  *i = '\'';
+	}
 	helloStr[0] = '\0';
-	sprintf(helloStr, "0 0 client hello 0 0 %d %d -uid=%d -pid=%d -gid=%d\n", rev.Maj, rev.Min, uid, pid, gid);
+	sprintf(helloStr, "0 0 client hello 0 0 %d %d %d \"%s\" -uid=%d -pid=%d -gid=%d\n", rev.Maj, rev.Min, rev.Bug, patch, uid, pid, gid);
+	free(patch);
+	freeRevision(&rev);
 
 	if (sendControlMessage(fd, helloStr, strlen(helloStr), en) < 0) {
 		dc_debug(DC_ERROR, "Failed to send Hello fd=%d", fd);
@@ -1934,9 +1942,15 @@ void getRevision( revision *rev )
 {
 	rev->Maj = dc_getProtocol();
 	rev->Min = dc_getMajor();
+	rev->Bug = dc_getMinor();
+	rev->Patch = strdup(dc_getPatch());
 }
 
 
+void freeRevision( revision *rev )
+{
+	free(rev->Patch);
+}
 
 void dc_setTCPSendBuffer( int newSize )
 {
