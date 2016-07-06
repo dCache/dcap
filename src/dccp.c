@@ -409,7 +409,7 @@ int main(int argc, char *argv[])
 	if (rc != -1 )  {
 		copy_time = elapsed_transfer_time(ett_measure);
 		dc_bytes_as_size(formatted_size, size);
-		fprintf(stderr,"%llu bytes (%s) in %lu seconds",(off64_t)size, formatted_size, copy_time);
+		fprintf(stderr,"%ld bytes (%s) in %lu seconds", size, formatted_size, copy_time);
 		if ( copy_time > 0) {
 			dc_bytes_as_size(formatted_rate, (double)size / copy_time);
 			fprintf(stderr," (%s/s)\n", formatted_rate);

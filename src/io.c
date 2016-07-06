@@ -17,6 +17,7 @@
 
 #include <stdlib.h>
 #include "system_io.h"
+#include "socket_nio.h"
 #include "ioTunnel.h"
 #include <sys/socket.h>
 #include <netinet/in.h>

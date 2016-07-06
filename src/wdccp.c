@@ -231,7 +231,7 @@ int file2file( const char *source, const char *destination, int overwrite, size_
 
 	if (rc != -1 )  {
 		copy_time = endtime-starttime ;
-		fprintf(stderr,"%s => %s: %lld bytes in %lu seconds",source, destination, (off_t)size, copy_time);
+		fprintf(stderr,"%s => %s: %ld bytes in %lu seconds",source, destination, size, copy_time);
 		if ( copy_time > 0) {
 			fprintf(stderr," (%.2f KB/sec)\n",(double)size/(double)(1024*copy_time) );
 		}else{

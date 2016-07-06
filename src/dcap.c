@@ -813,7 +813,7 @@ create_data_socket(int *dataFd, unsigned short *cbPort)
 #else
 	size_t          addrSize;
 #endif
-	int             bindResult;
+	int             bindResult = -1;
 	int             i;
 
 	*dataFd = socket(AF_INET, SOCK_STREAM, 0);
@@ -833,14 +833,12 @@ create_data_socket(int *dataFd, unsigned short *cbPort)
 
 
 	/* try to get free slot in range of TCP ports */
-	for( i = 0 ; i < callBackPortRange; i++) {
+	for( i = 0 ; i < callBackPortRange && bindResult < 0; i++) {
 
 		*cbPort += i;
 		me.sin_port = htons(*cbPort + i);
 		addrSize = sizeof(me);
 		bindResult = bind(*dataFd, (struct sockaddr *) & me, addrSize);
-		if( bindResult == 0) break;
-
 	}
 
 	if (bindResult < 0) {
@@ -1641,10 +1639,8 @@ void dc_setReplyHostName(const char *s)
    if( (s == NULL) || (getenv("DCACHE_REPLY") != NULL) )
         return;
 
-   if( hostName != NULL )
-        free(hostName);
-
-	dc_debug(DC_INFO, "Binding client callback hostname to %s.", s);
+    dc_debug(DC_INFO, "Binding client callback hostname to %s.", s);
+    free(hostName);
     hostName = (char *)strdup(s);
 }
 

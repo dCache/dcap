@@ -6,6 +6,7 @@
  *                 DESY Hamburg DMG-Division
  */
 #include "tunnelQueue.h"
+#include <stdlib.h>
 
 
 #define MAX_GSS_CONTEXT 8192

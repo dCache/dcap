@@ -25,6 +25,7 @@
 #include "dcap.h"
 #include "socket_nio.h"
 #include "node_plays.h"
+#include "io.h"
 #include "system_io.h"
 
 /*

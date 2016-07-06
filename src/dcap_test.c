@@ -245,7 +245,7 @@ off_t *fisher_yates_shuffle( size_t item_size, size_t count)
 	read_order[k] = i_th_item(i,item_size);
 
 	if( i % 10000000 == 0) {
-	    printf( "    %u of %u (%d%%)\n", i, count, (int)((double)i/count *100));
+	    printf( "    %lu of %lu (%d%%)\n", i, count, (int)((double)i/count *100));
 	}
     }
 
@@ -383,7 +383,7 @@ void print_stat_info( struct stat *s)
     printf("st_ino:     %ld\n", s->st_ino);
     printf("st_dev:     %lu\n", (unsigned long) s->st_dev);
     printf("st_mode:    %s (0%o)\n", mode, s->st_mode);
-    printf("st_nlink:   %d\n", s->st_nlink);
+    printf("st_nlink:   %lu\n", s->st_nlink);
     printf("st_uid:     %s (%d)\n", pw == NULL ? "unknown" : pw->pw_name,  s->st_uid);
     printf("st_gid:     %s (%d)\n", gr == NULL? "unknown": gr->gr_name, s->st_gid);
     printf("st_size:    %lu\n", (unsigned long) s->st_size);
