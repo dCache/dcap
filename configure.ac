@@ -164,7 +164,7 @@ AC_CHECK_HEADERS([openssl/err.h], [], [nossl=1])
 if test "${nossl}" != "0" ; then
 AC_MSG_RESULT([Disabling ssl plugin as header files not found.])
 else
-AC_CHECK_LIB(ssl,SSL_library_init,[
+AC_CHECK_LIB(ssl,SSL_write,[
 SSL_LIBS="-lssl"
 ],[
 nossl=1
