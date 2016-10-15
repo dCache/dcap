@@ -37,6 +37,7 @@
 #include "input_parser.h"
 #include "dcap.h"
 #include "dcap_poll.h"
+#include "dcap_functions.h"
 #include "dcap_interpreter.h"
 #include "dcap_str_util.h"
 #include "dcap_mqueue.h"
