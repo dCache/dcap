@@ -119,7 +119,7 @@ int file2file( const char *source, const char *destination, int overwrite, size_
 	int isStdout = 0;
 	struct stat sbuf;
 	char extracommand[128];
-	char *real_destination;
+	char *real_destination = NULL;
 	int isDir = 0;
 
 #ifdef WIN32

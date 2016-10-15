@@ -123,21 +123,21 @@ dc_real_read( struct vsp_node *node, void *vbuff, size_t buflen)
 	char *buff = vbuff;
 	int             tmp;
 	int32_t         readmsg[7]; /* keep one buffer for READ and SEEK_AND_READ*/
-	int              msglen;
-	int64_t         size;
+	int             msglen;
+	int64_t         size = 0;
 	int32_t         blocksize;
-    int32_t         lastBlockSize;
+	int32_t         lastBlockSize;
 	size_t          totsize;
 	char           *input_buffer;
-	int            use_ahead = 0;
-	ssize_t        nbytes, rest = 0;
-	size_t         ra_buffer = 0;
+	int             use_ahead = 0;
+	ssize_t         nbytes, rest = 0;
+	size_t          ra_buffer = 0;
 
 	int             loop = 0; /* workaround for looping bug */
-    int             errorState = 0;
+	int             errorState = 0;
 
 	/* reconnect */
-	int64_t readSize; /* number of bytes requested to read */
+	int64_t readSize = 0; /* number of bytes requested to read */
 
 
 	if( (node->ahead != NULL) && ( node->ahead->buffer == NULL) ) {
