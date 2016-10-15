@@ -492,7 +492,7 @@ gss_check(int sock)
 
 		if (output_token.length != 0) {
 			eWrite(sock, output_token.value, output_token.length);
-			printf("sended token %d\n", output_token.length);
+			printf("sended token %lu\n", (unsigned long)output_token.length);
 			gss_release_buffer(&min_stat, &output_token);
 		}
 

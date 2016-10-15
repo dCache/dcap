@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 
 	data_len = dc_readTo(src, dest, sbuf.st_size);
 	if( data_len != sbuf.st_size) {
-		fprintf(stderr,"received data (%zd) .NE. file size(%lu) \n", data_len, (unsigned long)sbuf.st_size);
+		fprintf(stderr,"received data (%ld) .NE. file size(%llu) \n", (long)data_len, (unsigned long long)sbuf.st_size);
 		rc = -3;
 	}
 
