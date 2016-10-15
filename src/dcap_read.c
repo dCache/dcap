@@ -598,7 +598,6 @@ int dc_readv2(int fd, iovec2 *vector, int count) {
 
 	int v = 0; /* indes of current buffer */
 	int vPos = 0; /* position in current buffer */
-	int bPos = 0; /* position in current transfer block */
 
 	int vectorIndex = 0; /* offset of current vector */
 	int vectorCount; /* number of vectors to process */
@@ -642,7 +641,6 @@ int dc_readv2(int fd, iovec2 *vector, int count) {
 
 		v = vectorIndex; /* indes of current buffer */
 		vPos = 0; /* position in current buffer */
-		bPos = 0; /* position in current transfer block */
 		totalToRead = 0; /* byte to read in current chunk*/
 
 		vectorCount = ((count - vectorIndex) > IOV_MAX) ? IOV_MAX : (count - vectorIndex);
@@ -702,7 +700,6 @@ int dc_readv2(int fd, iovec2 *vector, int count) {
 
 			rc = readn(node->dataFd, (char *) &blocksize, sizeof(blocksize), NULL);
 			blocksize = ntohl(blocksize);
-			bPos = 0;
 			dc_debug(DC_IO, "dc_readv2: transfer blocksize %d", blocksize);
 
 			if(vector[v].len ==  vPos) {

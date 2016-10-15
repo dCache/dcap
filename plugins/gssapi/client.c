@@ -28,10 +28,7 @@ main(int argc, char *argv[])
 	int             fd;
 	struct sockaddr_in serv_addr;
 	struct hostent *hp;
-	char *secret;
-	int n;
 	char c;
-	char buffer[512];
 
 	if(argc != 3 ) {
 		printf("Usage: %s <host> <port>\n", argv[0]);
