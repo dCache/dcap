@@ -25,6 +25,8 @@
 #include <gssapi_generic.h>
 #endif /* MIT_KRB5 */
 
+#include "debug_level.h"
+
 /* workaround for MIT kerberos implementation */
 #ifndef GSS_C_AF_INET6
 #  define GSS_C_AF_INET6 24

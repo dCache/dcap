@@ -123,21 +123,21 @@ dc_real_read( struct vsp_node *node, void *vbuff, size_t buflen)
 	char *buff = vbuff;
 	int             tmp;
 	int32_t         readmsg[7]; /* keep one buffer for READ and SEEK_AND_READ*/
-	int              msglen;
-	int64_t         size;
+	int             msglen;
+	int64_t         size = 0;
 	int32_t         blocksize;
-    int32_t         lastBlockSize;
+	int32_t         lastBlockSize;
 	size_t          totsize;
 	char           *input_buffer;
-	int            use_ahead = 0;
-	ssize_t        nbytes, rest = 0;
-	size_t         ra_buffer = 0;
+	int             use_ahead = 0;
+	ssize_t         nbytes, rest = 0;
+	size_t          ra_buffer = 0;
 
 	int             loop = 0; /* workaround for looping bug */
-    int             errorState = 0;
+	int             errorState = 0;
 
 	/* reconnect */
-	int64_t readSize; /* number of bytes requested to read */
+	int64_t readSize = 0; /* number of bytes requested to read */
 
 
 	if( (node->ahead != NULL) && ( node->ahead->buffer == NULL) ) {
@@ -598,7 +598,6 @@ int dc_readv2(int fd, iovec2 *vector, int count) {
 
 	int v = 0; /* indes of current buffer */
 	int vPos = 0; /* position in current buffer */
-	int bPos = 0; /* position in current transfer block */
 
 	int vectorIndex = 0; /* offset of current vector */
 	int vectorCount; /* number of vectors to process */
@@ -642,7 +641,6 @@ int dc_readv2(int fd, iovec2 *vector, int count) {
 
 		v = vectorIndex; /* indes of current buffer */
 		vPos = 0; /* position in current buffer */
-		bPos = 0; /* position in current transfer block */
 		totalToRead = 0; /* byte to read in current chunk*/
 
 		vectorCount = ((count - vectorIndex) > IOV_MAX) ? IOV_MAX : (count - vectorIndex);
@@ -702,7 +700,6 @@ int dc_readv2(int fd, iovec2 *vector, int count) {
 
 			rc = readn(node->dataFd, (char *) &blocksize, sizeof(blocksize), NULL);
 			blocksize = ntohl(blocksize);
-			bPos = 0;
 			dc_debug(DC_IO, "dc_readv2: transfer blocksize %d", blocksize);
 
 			if(vector[v].len ==  vPos) {

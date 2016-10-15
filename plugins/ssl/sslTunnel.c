@@ -146,8 +146,10 @@ SSL * get_SSL_map(int sock)
 {
 
 	register unsigned int i;
+	/*
 	sslPair * tmp;
 	SSL *ssl_con;
+	*/
 
 	for(i = 0; i < qLen; i++) {
 		if(sslPairArray[i].sock == sock) {

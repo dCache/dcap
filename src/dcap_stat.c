@@ -359,7 +359,7 @@ int dc_fstat64(int fd, struct stat64 *buf)
 	struct vsp_node *node;
 	int rc;
 	char *path;
-	off64_t size;
+	off64_t size = 0;
 
 #ifdef DC_CALL_TRACE
 	showTraceBack();

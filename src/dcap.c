@@ -1272,7 +1272,6 @@ data_hello_conversation(struct vsp_node * node)
 	u_short         remotePort;
 	char           *hostname;
 	int32_t         sessionId, challengeSize;
-	int             tmp;
 
 	while(1) {
 
@@ -1358,10 +1357,10 @@ data_hello_conversation(struct vsp_node * node)
 		}
 #endif /* SO_SNDBUF */
 
-		tmp = readn(newFd, (char *) &sessionId, sizeof(sessionId), NULL);
+		readn(newFd, (char *) &sessionId, sizeof(sessionId), NULL);
 		sessionId = ntohl(sessionId);
 
-		tmp = readn(newFd, (char *) &challengeSize, sizeof(challengeSize), NULL);
+		readn(newFd, (char *) &challengeSize, sizeof(challengeSize), NULL);
 		challengeSize = ntohl(challengeSize);
 
 		dc_debug(DC_INFO, "Got callback connection from %s:%d for session %d, myID %d.",
@@ -1415,7 +1414,6 @@ int sendDataMessage(struct vsp_node *node, char *message, int sizeOfMessage, int
 	asciiMessage *aM;
 	int try = 0;
 	int rc = 0;
-	int err = 0;
 
 	dc_debug(DC_CALLS, "Entered sendDataMessage.");
 again:
@@ -1434,7 +1432,6 @@ again:
 	if( ret < sizeOfMessage ) {
 		dc_debug(DC_ERROR, "sendDataMessage: write message failed => ret = %d.", ret);
 		rc = -1;
-		err = 1;
 		goto end;
 	}
 

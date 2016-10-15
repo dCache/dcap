@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
 	vector[0].buf = malloc(1024);
 	vector[1].buf = malloc(1024);
-	vector[2].buf = &tbuf[0];
+	vector[2].buf = (char*) &tbuf[0];
 
 	vector[0].len = 1024;
 	vector[1].len = 1024;

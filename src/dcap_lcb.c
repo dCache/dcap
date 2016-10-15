@@ -523,7 +523,7 @@ cbindex_t *extract_lru_cb(local_cache_buffer_t *lb)
 cbindex_t *find_lru_buf(local_cache_buffer_t *lb)
 {
     int i;
-    cbindex_t *cb, *lru_cb;
+    cbindex_t *cb, *lru_cb = NULL;
     unsigned long age, maxage;
 
     /* The algorithm requires that the first buffer (index 0) of the
