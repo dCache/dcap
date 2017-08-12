@@ -56,7 +56,8 @@ int eInit(int fd)
 		++initialized;
 	}
 
-	ssl_ctx = SSL_CTX_new(TLSv1_client_method());
+	ssl_ctx = SSL_CTX_new(SSLv23_client_method());
+	SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
 	ssl_con = (SSL *) SSL_new(ssl_ctx);
 
 	ret = SSL_set_fd(ssl_con, fd);
