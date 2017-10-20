@@ -32,5 +32,7 @@ typedef struct {
 
 extern dcap_url *dc_getURL(const char *);
 extern int isUrl(const char *);
+extern char *get_url_string(dcap_url *url);
+extern void free_url(dcap_url *url);
 
 #endif /* DCAP_URL_H */

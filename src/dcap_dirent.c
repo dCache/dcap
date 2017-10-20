@@ -84,19 +84,12 @@ DIR * dc_opendir(const char *path)
 
  	node = new_vsp_node( path );
 	if( node == NULL ) {
-		free(url->file);
-		free(url->host);
-		if( url->prefix != NULL ) free(url->prefix);
-		free(url);
+		free_url(url);
 		return NULL;
 	}
 
 	node->url = url;
-	if (url->type == URL_PNFS) {
-		node->pnfsId = (char *)strdup(url->file);
-	}else{
-		node->pnfsId = (char *)strdup(path);
-	}
+	node->pnfsId = get_url_string(url);
 	node->asciiCommand = DCAP_CMD_OPENDIR;
 
 	if( cache_open(node) != 0 ) {

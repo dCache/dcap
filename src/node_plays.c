@@ -251,12 +251,7 @@ void node_destroy( struct vsp_node *node)
 	free(node->file_name);
 
 	if(node->url != NULL) {
-		free(node->url->file);
-		free(node->url->host);
-		if( node->url->prefix != NULL ) {
-			free( node->url->prefix);
-		}
-		free(node->url);
+		free_url(node->url);
 	}
 
 	if(node->ipc != NULL) {

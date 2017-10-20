@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <netdb.h>
+#include <ctype.h>
 
 #include "dcap.h"
 #include "dcap_types.h"
@@ -34,6 +35,7 @@
 #define PNFS_PREFIX "pnfs://"
 #define DEFAULT_DOOR "dcache"
 
+static char hex[] = "0123456789ABCDEF";
 
 int isUrl( const char *path)
 {
@@ -42,6 +44,32 @@ int isUrl( const char *path)
 
 }
 
+/* Converts an integer value to its hex character*/
+char to_hex(char code) {
+	return hex[code & 15];
+}
+
+/* Returns a url-encoded version of given string */
+char *url_encode(char *s) {
+	char *p;
+	char *buf;
+	char *pbuf;
+	p = s;
+
+	buf = malloc(strlen(s) * 3 + 1); // every escaped character takes 3 symbols. Potentially all can be escaped
+	pbuf = buf;
+
+	while (*p) {
+		if (isalnum(*p) || *p == '-' || *p == '_' || *p == '.' || *p == '~' || *p == '/') {
+			*pbuf++ = *p;
+		} else {
+			*pbuf++ = '%', *pbuf++ = to_hex(*p >> 4), *pbuf++ = to_hex(*p & 15);
+		}
+		p++;
+	}
+	*pbuf = '\0';
+	return buf;
+}
 
 dcap_url* dc_getURL( const char *path )
 {
@@ -115,7 +143,7 @@ dcap_url* dc_getURL( const char *path )
 		return NULL;
 	}
 
-	url->file = strdup(w + 1);
+	url->file = url_encode(w + 1);
 
 	host_len = w-s;
 
@@ -201,4 +229,36 @@ dcap_url* dc_getURL( const char *path )
 	}
 
 	return url;
+}
+
+
+char *get_url_string(dcap_url *url)
+{
+	char *s;
+
+	if (url->type == URL_PNFS) {
+		return strdup(url->file);
+	}
+
+	// prefix + 'dcap://' + host + '/' + file + '\0'
+	s = malloc((url->prefix == NULL ? 0 : strlen(url->prefix)) +
+		strlen(url->host) + strlen(url->file) + 9);
+
+	if (s == NULL) {
+		return NULL;
+	}
+	s[0] = '\0';
+
+	sprintf(s, "%sdcap://%s/%s",
+		url->prefix == NULL ? "" : url->prefix,
+		url->host, url->file);
+	return s;
+}
+
+void free_url(dcap_url *url)
+{
+	free(url->host);
+	free(url->file);
+	free(url->prefix);
+	free(url);
 }

@@ -95,13 +95,7 @@ int dc_acl(const char *path, int cmd, int nentries, void *aclbufp)
     }
     else
     {
-        free(url->file);
-        free(url->host);
-        if( url->prefix != NULL )
-        {
-            free(url->prefix);
-        }
-        free(url);
+	free_url(url);
     }
     return dc_acl_dummy(cmd);
 }

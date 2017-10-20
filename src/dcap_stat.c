@@ -218,9 +218,7 @@ int dc_stat64(const char *path, struct stat64 *buf)
 	node = new_vsp_node(path);
 	if (node == NULL) {
 		dc_debug(DC_ERROR, "dc_stat: Failed to create new node.");
-		free(url->file);
-		free(url->host);
-		free(url);
+		free_url(url);
 		return -1;
 	}
 
@@ -228,11 +226,7 @@ int dc_stat64(const char *path, struct stat64 *buf)
 	if (url == NULL ) {
 		getPnfsID(node);
 	}else{
-		if (url->type == URL_PNFS) {
-			node->pnfsId = (char *)strdup(url->file);
-		}else{
-			node->pnfsId = (char *)strdup(path);
-		}
+		node->pnfsId = get_url_string(url);
 	}
 
 	node->asciiCommand = DCAP_CMD_STAT;
@@ -304,9 +298,7 @@ int dc_lstat64(const char *path, struct stat64 *buf)
 	node = new_vsp_node(path);
 	if (node == NULL) {
 		dc_debug(DC_ERROR, "dc_stat: Failed to create new node.");
-		free(url->file);
-		free(url->host);
-		free(url);
+		free_url(url);
 		return -1;
 	}
 
@@ -314,11 +306,7 @@ int dc_lstat64(const char *path, struct stat64 *buf)
 	if (url == NULL ) {
 		getPnfsID(node);
 	}else{
-		if (url->type == URL_PNFS) {
-			node->pnfsId = (char *)strdup(url->file);
-		}else{
-			node->pnfsId = (char *)strdup(path);
-		}
+		node->pnfsId = get_url_string(url);
 	}
 
 	node->asciiCommand = DCAP_CMD_LSTAT;

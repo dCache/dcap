@@ -47,19 +47,12 @@
 
  	node = new_vsp_node( path );
 	if( node == NULL ) {
-		free(url->file);
-		free(url->host);
-		if( url->prefix != NULL ) free(url->prefix);
-		free(url);
+		free_url(url);
 		return 1;
 	}
 
 	node->url = url;
-	if (url->type == URL_PNFS) {
-		node->pnfsId = (char *)strdup(url->file);
-	}else{
-		node->pnfsId = (char *)strdup(path);
-	}
+	node->pnfsId = get_url_string(url);
 	node->asciiCommand = DCAP_CMD_UNLINK;
 
 	rc = cache_open(node);
@@ -94,19 +87,12 @@ int dc_rmdir( const char *path)
 
  	node = new_vsp_node( path );
 	if( node == NULL ) {
-		free(url->file);
-		free(url->host);
-		if( url->prefix != NULL ) free(url->prefix);
-		free(url);
+		free_url(url);
 		return 1;
 	}
 
 	node->url = url;
-	if (url->type == URL_PNFS) {
-		node->pnfsId = (char *)strdup(url->file);
-	}else{
-		node->pnfsId = (char *)strdup(path);
-	}
+	node->pnfsId = get_url_string(url);
 	node->asciiCommand = DCAP_CMD_RMDIR;
 
 	rc = cache_open(node);

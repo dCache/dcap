@@ -101,6 +101,16 @@ void test_bad_formated()
     CU_ASSERT_PTR_NULL(url);
 }
 
+void test_escape_non_ascii() {
+  dcap_url * url = dc_getURL("dcap://1.2.3.4/path/to/some_ü_file");
+  CU_ASSERT_STRING_EQUAL(url->file, "path/to/some_%C3%BC_file");
+}
+
+void test_escape_space() {
+  dcap_url * url = dc_getURL("dcap://1.2.3.4/path/to/some file");
+  CU_ASSERT_STRING_EQUAL(url->file, "path/to/some%20file");
+}
+
 int main()
 {
     CU_pSuite pSuite = NULL;
@@ -136,6 +146,10 @@ int main()
             (NULL == CU_add_test(pSuite, "url with ipv6, no port", test_url_ipv6_no_port))
             ||
             (NULL == CU_add_test(pSuite, "bad formated url", test_bad_formated))
+            ||
+            (NULL == CU_add_test(pSuite, "non ascii url not encoded", test_escape_non_ascii))
+            ||
+            (NULL == CU_add_test(pSuite, "space in url not encoded", test_escape_space))
             ) {
         CU_cleanup_registry();
         return CU_get_error();
@@ -148,4 +162,3 @@ int main()
     CU_cleanup_registry();
     return fails;
 }
-

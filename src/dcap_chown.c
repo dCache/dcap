@@ -45,19 +45,12 @@ int dc_chown( const char *path, uid_t uid, gid_t gid)
 
  	node = new_vsp_node( path );
 	if( node == NULL ) {
-		free(url->file);
-		free(url->host);
-		if( url->prefix != NULL ) free(url->prefix);
-		free(url);
+		free_url(url);
 		return 1;
 	}
 
 	node->url = url;
-	if (url->type == URL_PNFS) {
-		node->pnfsId = (char *)strdup(url->file);
-	}else{
-		node->pnfsId = (char *)strdup(path);
-	}
+	node->pnfsId = get_url_string(url);
 	node->asciiCommand = DCAP_CMD_CHOWN;
 
 	node->uid = uid;

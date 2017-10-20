@@ -56,9 +56,7 @@ int dc_rename( const char *oldPath, const char *newPath )
 	node = new_vsp_node(oldPath);
 	if (node == NULL) {
 		dc_debug(DC_ERROR, "dc_rename: Failed to create new node.");
-		free(url->file);
-		free(url->host);
-		free(url);
+		free_url(url);
 		return -1;
 	}
 
@@ -67,11 +65,7 @@ int dc_rename( const char *oldPath, const char *newPath )
 	if (url == NULL ) {
 		getPnfsID(node);
 	}else{
-		if (url->type == URL_PNFS) {
-			node->pnfsId = (char *)strdup(url->file);
-		}else{
-			node->pnfsId = (char *)strdup(oldPath);
-		}
+		node->pnfsId = get_url_string(url);
 	}
 
 	node->asciiCommand = DCAP_CMD_RENAME;

@@ -188,9 +188,7 @@ dc_open(const char *fname, int flags,...)
 	if(path == NULL) {
 		dc_debug(DC_ERROR, "Can not resolve path to %s.", fname);
 		if(url != NULL) {
-			free(url->file);
-			free(url->host);
-			free(url);
+			free_url(url);
 		}
 		return -1;
 	}
@@ -201,10 +199,7 @@ dc_open(const char *fname, int flags,...)
 		dc_debug(DC_ERROR, "Failed to create new node.");
 		free(path);
 		if(url != NULL) {
-			free(url->file);
-			free(url->host);
-			if( url->prefix != NULL ) free(url->prefix);
-			free(url);
+			free_url(url);
 		}
 		return -1;
 	}
@@ -233,11 +228,7 @@ dc_open(const char *fname, int flags,...)
 		}
 	}else{
 		node->url = url;
-		if(url->type == URL_PNFS) {
-			node->pnfsId = (char *)strdup(url->file);
-		}else{
-			node->pnfsId = (char *)strdup(fname);
-		}
+		node->pnfsId = get_url_string(url);
 	}
 
 	node->asciiCommand = flags & DC_STAGE ?
