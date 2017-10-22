@@ -1,36 +1,32 @@
-dnl $Id: configure.in,v 1.12 2003/10/07 11:51:53 omsynge Exp $
-dnl -------------------------------------------------------------------------
+m4_define([dcap_major_version], [2])
+m4_define([dcap_minor_version], [47])
+m4_define([dcap_micro_version], [11])
+m4_define([dcap_patch_version], [])
 
+m4_define([libdcap_version],
+      [dcap_major_version.dcap_minor_version.dcap_micro_version])
 
-
-AC_INIT(src/dcap.c)
-
+AC_INIT([dcap], [libdcap_version], [support@dcache.org])
 AC_CONFIG_AUX_DIR(config)
-AC_CANONICAL_SYSTEM
-AM_CONFIG_HEADER(src/debug_level.h)
 
+AC_DEFINE_UNQUOTED(DCAP_VER_PROTOCOL, dcap_major_version, [DCAP protocol version])
+AC_DEFINE_UNQUOTED(DCAP_VER_MAJOR, dcap_minor_version, [LibDCAP version major])
+AC_DEFINE_UNQUOTED(DCAP_VER_MINOR, dcap_micro_version, [LibDCAP version minor])
+AC_DEFINE_UNQUOTED(DCAP_VER_PATCH, "dcap_patch_version", [LibDCAP patch level])
 
-dnl uncomment when tagging
-RELEASE=TRUE
+AM_INIT_AUTOMAKE
 
-VER_ARCHITECTURE=2
-VER_MAJOR=47
-VER_MINOR=11
-VER_PATCH=2
-if test "A" = A$RELEASE; then
-    VER_PATCH=${VER_PATCH}_`date '+20%y%m%d%H'`
-fi
-
-AM_INIT_AUTOMAKE(dcap,$VER_ARCHITECTURE.$VER_MAJOR.$VER_MINOR,"support@dcache.org","dcap","http://www.dcache.org/")
-AC_SUBST(VER_ARCHITECTURE)
-AC_SUBST(VER_MAJOR)
-AC_SUBST(VER_MINOR)
-AC_SUBST(VER_PATCH)
-
-LIBRARY_VERSION="$VER_ARCHITECTURE:$VER_MAJOR:1"
+LIBRARY_VERSION="dcap_major_version:dcap_minor_version:1"
 AC_SUBST(LIBRARY_VERSION)
 
+AC_CANONICAL_HOST
+
 AC_PROG_CC
+AM_PROG_AR
+
+LT_INIT([shared,disable-static])
+
+AM_CONFIG_HEADER(src/debug_level.h)
 
 #
 # Wall
@@ -45,12 +41,6 @@ esac])
 AC_SUBST([CWFLAG], [$ac_cv_cwflag])
 
 
-
-AC_PROG_INSTALL
-AM_PROG_LIBTOOL
-AC_PROG_LN_S
-
-AM_PROG_CC_C_O
 AC_SEARCH_LIBS([gethostbyname], [nsl])
 AC_SEARCH_LIBS([bind], [socket])
 
@@ -477,7 +467,7 @@ READV_SYM="readv"
 ACL_SYM="acl"
 FACL_SYM="facl"
 dnl Override defaults By OS
-case "${target_os}" in
+case "${host_os}" in
 linux-gnu)
 AC_MSG_RESULT([Setting the Linux preload methods])
 STAT_SYM="__xstat"
@@ -510,7 +500,7 @@ SEEKDIR_SYM="_seekdir"
 ;;
 *)
 AC_MSG_RESULT([Operating system not coded for explicitly so disabling preload])
-CPPFLAGS=${CPPFLAGS} -DDCAP_NO_PREAD
+CPPFLAGS="${CPPFLAGS} -DDCAP_NO_PREAD"
 ;;
 esac
 
