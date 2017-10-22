@@ -318,11 +318,7 @@ int copyfile(int src, int dest, size_t bufsize, off_t *size)
 
 void usage()
 {
-	fprintf(stderr,"DiskCache Copy Program. LibDCAP version: %d.%d.%d-%s\n",
-		dc_getProtocol(),
-		dc_getMajor(),
-		dc_getMinor(),
-		dc_getPatch());
+	fprintf(stderr,"DiskCache Copy Program. LibDCAP version: %s\n", getDcapVersion());
 	fprintf(stderr,"Usage:  dccp [-d <debugLevel>]  [-h <replyhostname>] [-i]\n");
 	fprintf(stderr,"    [-B <bufferSize>] [-X <extraOption>]\n");
 	fprintf(stderr,"    [-u] [-p <first port>[:last port]]\n");

@@ -1,5 +1,5 @@
 
-#define VER(a) "version-" #a " " __DATE__ " " __TIME__ ;
+#define VER(v)  v " " __DATE__ " " __TIME__ ;
 
 #include "dcap.h"
 #include "debug_level.h"

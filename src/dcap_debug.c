@@ -187,9 +187,5 @@ void init_dc_debug()
 		debug_stream = 2; /* stderr */
 	}
 
-	dc_debug(DC_INFO, "Dcap Version %d.%d.%d-%s",
-		dc_getProtocol(),
-		dc_getMajor(),
-		dc_getMinor(),
-		dc_getPatch());
+	dc_debug(DC_INFO, "Dcap Version %s", getDcapVersion());
 }

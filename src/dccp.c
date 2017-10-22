@@ -493,12 +493,7 @@ int copyfile(int src, int dest, size_t bufsize, off64_t *size, off64_t total_siz
 void usage()
 {
 
-	fprintf(stderr,"DiskCache Copy Program. LibDCAP version: %d.%d.%d-%s\n",
-        dc_getProtocol(),
-        dc_getMajor(),
-        dc_getMinor(),
-        dc_getPatch());
-
+	fprintf(stderr,"DiskCache Copy Program. LibDCAP version: %s\n", getDcapVersion());
 	fprintf(stderr,"Usage:  dccp [-H] [-d <debugLevel>]  [-h <replyhostname>] [-i]\n");
 	fprintf(stderr,"    [-P [-t <time in seconds>] [-l <stage location>] ]\n");
 	fprintf(stderr,"    [-a] [-b <read_ahead bufferSize>] [-B <bufferSize>]\n");
