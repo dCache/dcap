@@ -2041,9 +2041,11 @@ server * url2srv(dcap_url *url)
     srv->hostname = strdup(url->host);
     srv->port = url->port;
 
-    if (url->prefix != NULL) {
-        tunnel = malloc(64);
-        tunnel[0] = '\0';
+    tunnel = getenv("DCACHE_IO_TUNNEL");
+    if (tunnel != NULL) {
+        srv->tunnel = addIoPlugin(tunnel);
+    } else if (url->prefix != NULL) {
+        tunnel = malloc(strlen(url->prefix) + 12 + 1); // len(prefix) + len(libTunnel.so) + '\0'
         sprintf(tunnel, "lib%sTunnel.so", url->prefix);
         srv->tunnel = addIoPlugin(tunnel);
         free(tunnel);
