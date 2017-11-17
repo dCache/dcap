@@ -1,6 +1,6 @@
 m4_define([dcap_major_version], [2])
 m4_define([dcap_minor_version], [47])
-m4_define([dcap_micro_version], [11])
+m4_define([dcap_micro_version], [12])
 m4_define([dcap_patch_version], [])
 
 m4_define([libdcap_version],
