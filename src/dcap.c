@@ -742,7 +742,8 @@ int
 sayHello(int fd, ioTunnel *en)
 {
 
-	char            helloStr[64];
+	char_buf_t *context;
+	char           *helloStr;
 	char            *patch;
 	char            *i;
 	revision        rev;
@@ -761,19 +762,28 @@ sayHello(int fd, ioTunnel *en)
 	gid = (int)getgid();
 #endif
 
+	context = dc_char_buf_create();
 	getRevision(&rev);
 	patch = strdup(rev.Patch);
 	while (i = strchr(patch, '\"')) {
 	  *i = '\'';
 	}
-	helloStr[0] = '\0';
-	sprintf(helloStr, "0 0 client hello 0 0 %d %d %d \"%s\" -uid=%d -pid=%d -gid=%d\n", rev.Maj, rev.Min, rev.Bug, patch, uid, pid, gid);
+
+	helloStr = dc_char_buf_sprintf(context, "0 0 client hello 0 0 %d %d %d \"%s\" -uid=%d -pid=%d -gid=%d\n", rev.Maj, rev.Min, rev.Bug, patch, uid, pid, gid);
 	free(patch);
 	freeRevision(&rev);
+
+	if (helloStr == NULL) {
+		dc_debug(DC_ERROR, "Failed to allocate memory");
+		dc_char_buf_free(context);
+		errno = EIO;
+		return -1;
+	}
 
 	if (sendControlMessage(fd, helloStr, strlen(helloStr), en) < 0) {
 		dc_debug(DC_ERROR, "Failed to send Hello fd=%d", fd);
 		errno = EIO;
+		dc_char_buf_free(context);
 		return -1;
 	}
 	pollAdd(fd);
@@ -781,11 +791,13 @@ sayHello(int fd, ioTunnel *en)
 	aM = getControlMessage(HAVETO, NULL);
 	if( aM == NULL ) {
 		pollDelete(fd);
+		dc_char_buf_free(context);
 		errno = EIO;
 		return -1;
 	}
 
 	/* FIXME: implement result recognition */
+	dc_char_buf_free(context);
 	free(aM);
 
 	return 0;
@@ -895,7 +907,7 @@ ascii_open_conversation(struct vsp_node * node)
 	outStr = dc_char_buf_sprintf(context,"%d 0 client %s \"%s\"", node->queueID,
 	                                          asciiCommand(node->asciiCommand),
 	                                          node->asciiCommand == DCAP_CMD_TRUNC ? node->ipc : node->pnfsId );
-	
+
 	if (outStr == NULL){
 		goto out_of_mem_exit;
 	}
