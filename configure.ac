@@ -589,7 +589,6 @@ AC_SUBST(TUNNELLIBDIR)
 
 AC_OUTPUT(Makefile \
   src/Makefile \
-  src/dcap_version.c \
   plugins/Makefile \
   plugins/gssapi/Makefile \
   plugins/ssl/Makefile \
