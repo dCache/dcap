@@ -22,7 +22,7 @@ AC_SUBST(LIBRARY_VERSION)
 AC_CANONICAL_HOST
 
 AC_PROG_CC
-AM_PROG_AR
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
 LT_INIT([shared,disable-static])
 
