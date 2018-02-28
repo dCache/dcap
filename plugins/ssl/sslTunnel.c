@@ -95,7 +95,7 @@ int eInit(int fd)
 				printf("SSL_ERROR_WANT_CONNECT.\n");
 				break;
 			default:
-				printf("Unknow error.\n");
+				printf("Unknown error.\n");
 		}
 
 		ERR_print_errors_fp(stderr);

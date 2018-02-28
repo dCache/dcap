@@ -425,7 +425,7 @@ again:
 			/* this part reached if we are hunting for control messages */
 
 			if( (node != NULL) && (isFound == 0) ) {
-				dc_debug(DC_ERROR, "Control line [%d] unknow to the system", node->fd);
+				dc_debug(DC_ERROR, "Control line [%d] unknown to the system", node->fd);
 				rc = -1;
 			}
 
