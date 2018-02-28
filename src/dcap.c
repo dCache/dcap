@@ -119,6 +119,7 @@ static int get_data_socket();
 static int ascii_open_conversation(struct vsp_node *);
 static int getDataMessage(struct vsp_node *);
 static void getRevision( revision * );
+static void freeRevision( revision * );
 static int init_hostname();
 static void getPortRange();
 static int isActive();
