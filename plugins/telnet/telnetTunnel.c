@@ -47,7 +47,7 @@ int eInit(int fd)
 	    }
 	    fclose (pf);
 	  } else {
-	    printf ("Failed openning user authorization items at %s: %s\n", file, strerror(errno));
+	    printf ("Failed opening user authorization items at %s: %s\n", file, strerror(errno));
 	    user = strdup ("failed");
 	    passwd = strdup ("failed");
 	  }

@@ -243,7 +243,7 @@ void node_destroy( struct vsp_node *node)
 		return;
 	}
 
-	dc_debug(DC_INFO, "[%d] destroing node", node->dataFd);
+	dc_debug(DC_INFO, "[%d] destroying node", node->dataFd);
 
 
 	free(node->pnfsId);

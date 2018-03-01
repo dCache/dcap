@@ -61,7 +61,7 @@ dc_read(int fd, void *buff, size_t buflen)
 		n = dc_lcb_read( node, buff, buflen );
 		if ( n < 0 ) {
 			/* print error */
-			dc_debug(DC_ERROR, "lcb_read: problems reading %d read, %d requsted, giving up lcb", n, buflen );
+			dc_debug(DC_ERROR, "lcb_read: problems reading %d read, %d requested, giving up lcb", n, buflen );
 			dc_lcb_clean( node );
 			n = dc_real_read(node, buff, buflen);
 		}

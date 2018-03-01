@@ -40,7 +40,7 @@ Command failed!
 Server error message for [1]: "path /pnfs/example.org/data/dteam/test3 not found" (errno 10001).
 [-1] unpluging node
 Removing unneeded queue [1]
-[-1] destroing node
+[-1] destroying node
 Real file name: /etc/group.
 Using system native open for /etc/group.
 extra option:  -alloc-size=597 
