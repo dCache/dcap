@@ -49,7 +49,7 @@ __dc_errno()
 {
 	int *en;
 
-	/* only one thread allowed to kreate key*/
+	/* only one thread allowed to create key */
 	m_lock(&kLock);
 	if(!err_once) {
 		t_keycreate(&err_key, NULL);
@@ -71,7 +71,7 @@ __dc_srvMessage()
 {
 	char  **msg;
 
-	/* only one thread allowed to create key*/
+	/* only one thread allowed to create key */
 	m_lock(&kLock);
 	if(!msg_once) {
 		t_keycreate(&srvMessage_key, NULL);
@@ -92,7 +92,7 @@ static char * dc_errno2srvMessage()
 {
 	char  *sPtr;
 
-	/* only one thread allowed to kreate key*/
+	/* only one thread allowed to create key */
 	m_lock(&kLock);
 	if(!msgPtr_once) {
 		t_keycreate(&srvMessagePtr_key, NULL);
@@ -194,8 +194,7 @@ dc_error(const char *msg)
 
 void dc_setServerError(const char *msg)
 {
-    char *p;
-    int len;
+	char *p;
 
 	if(srvMessage != NULL) {
 		free(srvMessage);
@@ -209,20 +208,15 @@ void dc_setServerError(const char *msg)
 
 	errno = EIO;
 
-	/* 'p' will point to the buffer for error mesage */
+	/* 'p' will point to the buffer for error message */
 #ifdef _REENTRANT
 	p = dc_errno2srvMessage();
 #else
 	p = srvConstMessage;
 #endif /* _REENTRANT */
 
-	len = strlen(msg);
-	if(len > DC_MAX_SRV_ERR_MSG) {
-		len = DC_MAX_SRV_ERR_MSG;
-	}
-
-	strncpy(p, msg, len);
-	p[len] = '\0';
+	strncpy(p, msg, DC_MAX_SRV_ERR_MSG);
+	p[DC_MAX_SRV_ERR_MSG] = '\0';
 
 	/* there is no need to free 'p', while we get it already allocated */
 }
@@ -230,7 +224,7 @@ void dc_setServerError(const char *msg)
 
 const char * dc_strerror(int errnum)
 {
-    const char *p;
+	const char *p;
 
 	if( (errnum > DEMAXERRORNUM) || (errnum < DEOK) ) {
 		return "Unknown error";
@@ -238,9 +232,9 @@ const char * dc_strerror(int errnum)
 
 	if(errnum == DESRVMSG) {
 #ifdef _REENTRANT
-	p = dc_errno2srvMessage();
+		p = dc_errno2srvMessage();
 #else
-	p = srvConstMessage;
+		p = srvConstMessage;
 #endif /* _REENTRANT */
 	}else{
 		p = dcap_errlist[errnum];
