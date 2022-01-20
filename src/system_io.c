@@ -666,7 +666,7 @@ int system_fflush(FILE *stream)
 	return initIfNeeded() == 0 ? s_fflush(stream) : -1;
 }
 
-long system_ftello64(FILE *stream)
+off64_t system_ftello64(FILE *stream)
 {
 	return initIfNeeded() == 0 ? s_ftello64(stream) : -1;
 }
