@@ -524,7 +524,7 @@ cbindex_t *find_lru_buf(local_cache_buffer_t *lb)
 {
     int i;
     cbindex_t *cb, *lru_cb = NULL;
-    unsigned long age, maxage;
+    unsigned long age, maxage = 0;
 
     /* The algorithm requires that the first buffer (index 0) of the
      * array is never returned */

@@ -40,7 +40,7 @@ extern int system_readv(int, const struct iovec *vector, int count);
 extern int system_write(int, const void *, size_t);
 extern int system_writev(int, const struct iovec *vector, int count);
 extern int system_close(int);
-extern off_t system_lseek64(int, off64_t, int);
+extern off64_t system_lseek64(int, off64_t, int);
 extern int system_pread(int, void *, size_t, off_t);
 extern int system_pread64(int, void *, size_t, off64_t);
 extern int system_pwrite(int, const void *, size_t, off_t);

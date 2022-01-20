@@ -766,7 +766,7 @@ sayHello(int fd, ioTunnel *en)
 	context = dc_char_buf_create();
 	getRevision(&rev);
 	patch = strdup(rev.Patch);
-	while (i = strchr(patch, '\"')) {
+	while ((i = strchr(patch, '\"'))) {
 	  *i = '\'';
 	}
 
