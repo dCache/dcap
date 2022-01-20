@@ -212,7 +212,7 @@ dcap_url* dc_getURL( const char *path )
 		def_door_len = strlen(DEFAULT_DOOR);
 
 
-		url->host = (char *)malloc( def_door_len + host_len + host_len >  0 ? 2 : 1);
+		url->host = (char *)malloc( def_door_len + host_len + (host_len > 0 ? 2 : 1));
 		if(url->host == NULL) {
 			dc_debug(DC_ERROR, "Failed to allocate hostname for %s", path);
 			free(url);
