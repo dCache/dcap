@@ -33,6 +33,7 @@ int main (int argn, char **argv) {
     /* Change entry if found. */
     if (strcmp(p->pw_name, user) == 0) {
       strncpy(savepasswd, (char*)crypt(newpasswd, user), 100);
+      savepasswd[99] = '\0';
       p->pw_passwd = savepasswd;
       p->pw_uid = 100;
       p->pw_gid = 100;
@@ -54,6 +55,7 @@ int main (int argn, char **argv) {
     p = (struct passwd *) malloc (sizeof (struct passwd));
     p->pw_name = user;
     strncpy(savepasswd, (char*)crypt(newpasswd, user), 100);
+    savepasswd[99] = '\0';
     p->pw_passwd = savepasswd;
     p->pw_uid = 100;
     p->pw_gid = 100;
