@@ -39,10 +39,14 @@ int get_fin( struct vsp_node *);
 int get_ack(int , ConfirmationBlock * );
 
 
-#ifndef HAVE_NTOHLL
+// Declare the function if not defined by the system
+// as eithter a function or a macro
+// Darwin Libsystem may #define ntohll as a parameterized macro
+#if !defined(HAVE_NTOHLL) && !defined(ntohll)
 uint64_t ntohll(uint64_t x);
-#endif /* HAVE_NTOHLL */
+#endif /* HAVE_NTOHLL ntohll */
 
-#ifndef HAVE_HTONLL
+// Same as above`
+#if !defined(HAVE_HTONLL) && !defined(htonll)
 uint64_t htonll(uint64_t arg);
-#endif /* HAVE_HTONLL */
+#endif /* HAVE_HTONLL htonll */
