@@ -127,14 +127,6 @@ static ConfirmationBlock get_reply(int);
 static int name_invalid(char *);
 static server * url2srv(dcap_url *);
 
-#if !defined(HAVE_HTONLL) && !defined(htonll)
-    uint64_t  htonll(uint64_t);
-#endif
-
-#if !defined(HAVE_NTOHLL) && !defined(ntohll)
-    uint64_t  ntohll(uint64_t);
-#endif
-
 static MUTEX(couterLock);
 static unsigned int connectionCounter = 0;
 static unsigned int newCounter();
