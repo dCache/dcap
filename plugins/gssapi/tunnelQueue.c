@@ -2,8 +2,8 @@
  *       Copyright (c) 2000,2001,2002 DESY Hamburg DMG-Division
  *               All rights reserved.
  *
- *       THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF
- *                 DESY Hamburg DMG-Division
+ *   This program can be distributed under the terms of the GNU LGPL.
+ *   See the file COPYING.LIB
  */
 #include "tunnelQueue.h"
 #include <stdlib.h>
