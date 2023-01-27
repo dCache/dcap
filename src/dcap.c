@@ -115,7 +115,7 @@ static server *parseConfig(const char *);
 static int cache_connect(server *);
 static int sayHello(int, ioTunnel *);
 static int create_data_socket(int *, unsigned short *);
-static int get_data_socket();
+static int get_data_socket(unsigned short *);
 static int ascii_open_conversation(struct vsp_node *);
 static int getDataMessage(struct vsp_node *);
 static void getRevision( revision * );
@@ -199,6 +199,7 @@ cache_open(vsp_Node * node )
 	int old_fd;
 	int new_fd;
 	int rc;
+	unsigned short cbPort;
 
 	/* if node->dataFd != -1 - we need just to reconnect */
 	if(node->dataFd != -1) {
@@ -272,11 +273,11 @@ cache_open(vsp_Node * node )
 		(node->asciiCommand == DCAP_CMD_OPENDIR ) ||
 		(node->asciiCommand == DCAP_CMD_TRUNC) ) {
 
-		if (get_data_socket()) {
+		if (get_data_socket(&cbPort)) {
 			return -1;
 		}
 
-		node->data_port = callBackPort;
+		node->data_port = cbPort;
 	}
 
 	if (ascii_open_conversation(node) < 0) {
@@ -798,15 +799,14 @@ sayHello(int fd, ioTunnel *en)
 }
 
 int
-get_data_socket()
+get_data_socket(unsigned short *cbPort)
 {
        /* Initialize the callback socket */
        /* Only performed once per PID (but must be done for every PID due to forks). */
        m_lock(&bindLock);
-        pid_t curPid = getpid();
+       pid_t curPid = getpid();
        if( (curPid != callBackPid) || (callBackSocket == -1) ) {
-                callBackPort = 0;
-               if ( create_data_socket(&callBackSocket, &callBackPort) < 0) {
+               if ( create_data_socket(&callBackSocket, cbPort) < 0 ) {
                        dc_debug(DC_ERROR, "Callback socket not created.");
                        m_unlock(&bindLock);
                        return -1;
@@ -847,8 +847,7 @@ create_data_socket(int *dataFd, unsigned short *cbPort)
 	/* try to get free slot in range of TCP ports */
 	for( i = 0 ; i < callBackPortRange && bindResult < 0; i++) {
 
-		*cbPort += i;
-		me.sin6_port = htons(*cbPort + i);
+		me.sin6_port = htons(callBackPort + i);
 		addrSize = sizeof(me);
 		bindResult = bind(*dataFd, (struct sockaddr *) & me, addrSize);
 	}
