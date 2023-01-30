@@ -115,7 +115,7 @@ static server *parseConfig(const char *);
 static int cache_connect(server *);
 static int sayHello(int, ioTunnel *);
 static int create_data_socket(int *, unsigned short *);
-static int get_data_socket();
+static int get_data_socket(unsigned short *);
 static int ascii_open_conversation(struct vsp_node *);
 static int getDataMessage(struct vsp_node *);
 static void getRevision( revision * );
@@ -199,6 +199,7 @@ cache_open(vsp_Node * node )
 	int old_fd;
 	int new_fd;
 	int rc;
+	unsigned short cbPort;
 
 	/* if node->dataFd != -1 - we need just to reconnect */
 	if(node->dataFd != -1) {
@@ -272,11 +273,11 @@ cache_open(vsp_Node * node )
 		(node->asciiCommand == DCAP_CMD_OPENDIR ) ||
 		(node->asciiCommand == DCAP_CMD_TRUNC) ) {
 
-		if (get_data_socket()) {
+		if (get_data_socket(&cbPort)) {
 			return -1;
 		}
 
-		node->data_port = callBackPort;
+		node->data_port = cbPort;
 	}
 
 	if (ascii_open_conversation(node) < 0) {
@@ -798,15 +799,14 @@ sayHello(int fd, ioTunnel *en)
 }
 
 int
-get_data_socket()
+get_data_socket(unsigned short *cbPort)
 {
        /* Initialize the callback socket */
        /* Only performed once per PID (but must be done for every PID due to forks). */
        m_lock(&bindLock);
-        pid_t curPid = getpid();
+       pid_t curPid = getpid();
        if( (curPid != callBackPid) || (callBackSocket == -1) ) {
-                callBackPort = 0;
-               if ( create_data_socket(&callBackSocket, &callBackPort) < 0) {
+               if ( create_data_socket(&callBackSocket, cbPort) < 0 ) {
                        dc_debug(DC_ERROR, "Callback socket not created.");
                        m_unlock(&bindLock);
                        return -1;
@@ -821,7 +821,7 @@ int
 create_data_socket(int *dataFd, unsigned short *cbPort)
 {
 
-	struct sockaddr_in me;
+	struct sockaddr_in6 me;
 #if defined(__linux__) || defined(__GNU__) || defined(__FreeBSD_kernel__)
 	socklen_t       addrSize;
 #else
@@ -830,17 +830,15 @@ create_data_socket(int *dataFd, unsigned short *cbPort)
 	int             bindResult = -1;
 	int             i;
 
-	*dataFd = socket(AF_INET, SOCK_STREAM, 0);
+	*dataFd = socket(AF_INET6, SOCK_STREAM, 0);
 	if (*dataFd < 0) {
 		dc_errno = DESOCKET;
 		return *dataFd;
 	}
 
 	memset((char *) &me, 0, sizeof(me));
-	me.sin_family = AF_INET;
-	me.sin_addr.s_addr = htonl(INADDR_ANY);
-
-
+	me.sin6_family = AF_INET6;
+	me.sin6_addr = in6addr_any;
 
 	/* get port range from environment */
 	getPortRange();
@@ -849,8 +847,7 @@ create_data_socket(int *dataFd, unsigned short *cbPort)
 	/* try to get free slot in range of TCP ports */
 	for( i = 0 ; i < callBackPortRange && bindResult < 0; i++) {
 
-		*cbPort += i;
-		me.sin_port = htons(*cbPort + i);
+		me.sin6_port = htons(callBackPort + i);
 		addrSize = sizeof(me);
 		bindResult = bind(*dataFd, (struct sockaddr *) & me, addrSize);
 	}
@@ -868,7 +865,7 @@ create_data_socket(int *dataFd, unsigned short *cbPort)
 #else
 	getsockname(*dataFd, (struct sockaddr *) & me, (int *) &addrSize);
 #endif
-	*cbPort = ntohs(me.sin_port);
+	*cbPort = ntohs(me.sin6_port);
 
 	listen(*dataFd, 512);
 	return 1;
@@ -1274,17 +1271,15 @@ int getDataMessage(struct vsp_node *node)
 int
 data_hello_conversation(struct vsp_node * node)
 {
-	struct sockaddr_in him;
+	struct sockaddr_in6 him;
 	int             newFd;
 #if defined(__linux__) || defined(__GNU__) || defined(__FreeBSD_kernel__)
 	socklen_t       addrSize;
 #else
 	size_t          addrSize;
 #endif
-	struct in_addr *addr;
-	struct hostent *hostEnt;
 	u_short         remotePort;
-	char           *hostname;
+	char            hostname[NI_MAXHOST];
 	int32_t         sessionId, challengeSize;
 
 	while(1) {
@@ -1327,17 +1322,18 @@ data_hello_conversation(struct vsp_node * node)
 			return -1;
 		}
 
-		addr = (struct in_addr *) & (him.sin_addr);
-		hostEnt = (struct hostent *) gethostbyaddr((const char *) addr, sizeof(struct in_addr), AF_INET);
-		remotePort = ntohs(him.sin_port);
-
-		if (hostEnt != NULL) {
-			hostname = hostEnt->h_name;
+		if ((him.sin6_family == AF_INET6) && IN6_IS_ADDR_V4MAPPED(&him.sin6_addr)) {
+			struct sockaddr_in sin;
+			memset(&sin, 0, sizeof(sin));
+			sin.sin_family = AF_INET;
+			memcpy(&sin.sin_addr, &him.sin6_addr.s6_addr[12], sizeof(sin.sin_addr));
+			getnameinfo((struct sockaddr *)&sin, sizeof(sin), hostname, sizeof(hostname), NULL, 0, 0);
 		} else {
-			hostname = "UNKNOWN-HOST.invalid";
+			getnameinfo((struct sockaddr *)&him, sizeof(him), hostname, sizeof(hostname), NULL, 0, 0);
 		}
+		remotePort = ntohs(him.sin6_port);
 
-	/* change send/receive buffer size prior any write/read operation */
+		/* change send/receive buffer size prior any write/read operation */
 #ifdef  SO_RCVBUF
 		if( (rqReceiveBuffer != 0) && (node->rcvBuf == 0) ) {
 			/*
