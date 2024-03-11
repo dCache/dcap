@@ -117,7 +117,7 @@ dcap_preload64.c
 library_includedir="$(includedir)"
 
 
-AM_CPPFLAGS = -I$(includedir) -DLOCALEDIR=\"$(localedir)\"
+AM_CPPFLAGS = -I$(includedir) -DLOCALEDIR=\"$(localedir)\" -DDCAP_BUILD
 
 
 

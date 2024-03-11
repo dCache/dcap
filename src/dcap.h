@@ -47,7 +47,7 @@
 extern "C" {
 #endif
 
-#if defined(_FILE_OFFSET_BITS) &&  _FILE_OFFSET_BITS == 64
+#if !defined(DCAP_BUILD) && defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64
 
 #define dc_lseek    dc_lseek64
 #define dc_stat     dc_stat64
