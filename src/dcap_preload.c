@@ -14,6 +14,14 @@
 /*
  * $Id: dcap_preload.c,v 1.39 2006-09-26 07:47:27 tigran Exp $
  */
+
+#ifdef _FILE_OFFSET_BITS
+#undef _FILE_OFFSET_BITS
+#endif
+#ifdef _TIME_BITS
+#undef _TIME_BITS
+#endif
+
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <fcntl.h>

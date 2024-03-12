@@ -154,7 +154,7 @@ int file2file( const char *source, const char *destination, int overwrite, size_
 			mode = sbuf.st_mode & 0777;
 			/* tell to pool how many bytes we want to write */
 			extracommand[0] = '\0';
-			sprintf(extracommand, "-alloc-size=%ld",sbuf.st_size);
+			sprintf(extracommand, "-alloc-size=%lld", (long long) sbuf.st_size);
 			dc_setExtraOption(extracommand);
 		}
 	}
@@ -231,7 +231,7 @@ int file2file( const char *source, const char *destination, int overwrite, size_
 
 	if (rc != -1 )  {
 		copy_time = endtime-starttime ;
-		fprintf(stderr,"%s => %s: %ld bytes in %lu seconds",source, destination, size, copy_time);
+		fprintf(stderr,"%s => %s: %lld bytes in %lld seconds",source, destination, (long long) size, (long long) copy_time);
 		if ( copy_time > 0) {
 			fprintf(stderr," (%.2f KB/sec)\n",(double)size/(double)(1024*copy_time) );
 		}else{

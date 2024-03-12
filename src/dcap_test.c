@@ -380,15 +380,15 @@ void print_stat_info( struct stat *s)
     gr = getgrgid(s->st_gid);
     mode2string(s->st_mode, mode);
     printf("dc_stat result:\n");
-    printf("st_ino:     %ld\n", s->st_ino);
+    printf("st_ino:     %llu\n", (unsigned long long) s->st_ino);
     printf("st_dev:     %lu\n", (unsigned long) s->st_dev);
     printf("st_mode:    %s (0%o)\n", mode, s->st_mode);
     printf("st_nlink:   %lu\n", (unsigned long) s->st_nlink);
     printf("st_uid:     %s (%d)\n", pw == NULL ? "unknown" : pw->pw_name,  s->st_uid);
     printf("st_gid:     %s (%d)\n", gr == NULL? "unknown": gr->gr_name, s->st_gid);
-    printf("st_size:    %lu\n", (unsigned long) s->st_size);
+    printf("st_size:    %llu\n", (unsigned long long) s->st_size);
     printf("st_blksize: %ld\n", s->st_blksize);
-    printf("st_blocks:  %ld\n", s->st_blocks);
+    printf("st_blocks:  %lld\n", (long long) s->st_blocks);
     printf("st_atime:   %s", ctime(&s->st_atime));
     printf("st_mtime:   %s", ctime(&s->st_mtime));
     printf("st_ctime:   %s", ctime(&s->st_ctime));
