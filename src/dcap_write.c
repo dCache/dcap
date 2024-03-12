@@ -172,8 +172,8 @@ dc_real_write( struct vsp_node *node, const void *buff, size_t buflen)
 
 	/*
 		node->unsafeWrite == 0 : regular write operation
-		node->unsafeWrite == 1 : unsafeWrite, IO request not sended yet
-		node->unsafeWrite >1   : unsafeWrite, IO request sended
+		node->unsafeWrite == 1 : unsafeWrite, IO request not sent yet
+		node->unsafeWrite > 1  : unsafeWrite, IO request sent
 	*/
 
 	/* do following part allways for regular write and once of unsafe write */

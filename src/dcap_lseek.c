@@ -138,8 +138,8 @@ dc_real_lseek(struct vsp_node *node, off64_t offset, int whence)
 		dc_real_fsync(node);
 	}
 
-    /* funish unsafe write operation
-          if node->unsafeWrite flag > 1 : transaction in progress */
+	/* finish unsafe write operation
+	   if node->unsafeWrite flag > 1 : transaction in progress */
 
 	if(node->unsafeWrite > 1) {
 
